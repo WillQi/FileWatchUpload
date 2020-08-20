@@ -1,5 +1,7 @@
 package io.github.willqi.connection;
 
+import net.schmizz.sshj.SSHClient;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -17,13 +19,13 @@ public class SimpleSSHConnection extends SSHConnection {
     }
 
     @Override
-    protected boolean authenticate() {
+    protected boolean authenticate (SSHClient client) {
         try {
-            this.client.authPassword(this.username, this.password);
+            client.authPassword(this.username, this.password);
         } catch (IOException exception) {
             exception.printStackTrace();
             return false;
         }
-        return this.client.isAuthenticated();
+        return client.isAuthenticated();
     }
 }

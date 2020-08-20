@@ -47,7 +47,9 @@ public class WatchManager {
                     File modifiedFile = new File(Paths.get(this.watchFile.getAbsolutePath(), e.context().toString()).toString());
                     if (modifiedFile.isFile() && (this.watchFile.isDirectory() || this.watchFile.getName().equals(modifiedFile.getName()))) {
                         // upload.
+                        System.out.println("New " + modifiedFile.getName() + " detected! Uploading...");
                         this.connection.upload(modifiedFile, this.outputPath);
+                        System.out.println("Uploaded!");
                     }
 
                 }

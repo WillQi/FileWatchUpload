@@ -12,54 +12,45 @@ public abstract class SSHConnection implements Connection {
 
     protected final int port;
 
-    protected final SSHClient client = new SSHClient();
-
     public SSHConnection (String ip, int port) {
         this.ip = ip;
         this.port = port;
-        try {
-            this.client.addHostKeyVerifier(new PromiscuousVerifier());
-            this.client.useCompression();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
     }
 
     /**
      * The login details.
      */
-    protected abstract boolean authenticate ();
+    protected abstract boolean authenticate (SSHClient client);
 
     @Override
     public void upload(File file, String targetLocation) {
+        SSHClient client = new SSHClient();
         try {
-            this.client.connect(this.ip, this.port);
+            client.addHostKeyVerifier(new PromiscuousVerifier());
+            client.useCompression();
+            client.connect(this.ip, this.port);
         } catch (IOException exception) {
             System.out.println("Failed to upload.");
             exception.printStackTrace();
             return;
         }
-        if (!this.authenticate()) {
+        if (!this.authenticate(client)) {
             System.out.println("Failed to upload. Invalid credentials.");
-            this.disconnectClient();
+            try {
+                client.disconnect();
+            } catch (IOException exception) {}
             return;
         }
 
         try {
-            this.client.newSCPFileTransfer().upload(file.getAbsolutePath(), targetLocation);
+            client.newSCPFileTransfer().upload(file.getAbsolutePath(), targetLocation);
         } catch (IOException exception) {
             exception.printStackTrace();
         }
 
-        this.disconnectClient();
-    }
-
-    private void disconnectClient () {
         try {
-            this.client.disconnect();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
+            client.disconnect();
+        } catch (IOException exception) {}
     }
 
 }
