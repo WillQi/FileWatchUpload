@@ -1,6 +1,10 @@
 package io.github.willqi;
 
+import io.github.willqi.config.DefaultConfig;
+import io.github.willqi.connection.SimpleSSHConnection;
 import org.apache.commons.cli.*;
+
+import java.nio.file.Paths;
 
 public class FileWatchUpload {
 
@@ -8,13 +12,9 @@ public class FileWatchUpload {
 
         Options cliOptions = new Options();
 
-        cliOptions.addRequiredOption("w", "watch", true, "Path to file/directory to watch");
-        cliOptions.addRequiredOption("o", "outdir", true, "Output directory on remote server");
-        cliOptions.addRequiredOption("i", "ip", true, "IP of target server to connect to");
-        cliOptions.addRequiredOption("port", "port", true, "Port of target server to connect to");
-        cliOptions.addRequiredOption("user", "username", true, "Username to use to login to remote server");
-        cliOptions.addOption("pass", "password", true, "Password to use to login to remote server");
-        cliOptions.addOption("pk", "privatekey", true, "Path to private key file");
+        cliOptions.addOption("w", "watch", true, "Path to file/directory to watch");
+        cliOptions.addOption("o", "outdir", true, "Output directory on remote server");
+        cliOptions.addOption("c", "config", true, "Path to configuration file");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine;
@@ -26,6 +26,31 @@ public class FileWatchUpload {
                     .printHelp("filewatchupload", cliOptions);
             return;
         }
+
+        String configPath;
+
+        if (commandLine.hasOption("c")) {
+            configPath = commandLine.getOptionValue("c");
+        } else {
+            configPath = Paths.get(System.getProperty("user.dir"), "filewatchupload.config").toString();
+        }
+
+        DefaultConfig config = new DefaultConfig(configPath);
+
+        if (commandLine.hasOption("w")) {
+            config.setWatchPath(commandLine.getOptionValue("w"));
+        }
+        if (cliOptions.hasOption("o")) {
+            config.setOutputPath(commandLine.getOptionValue("o"));
+        }
+
+        new WatchManager(
+                config.getWatchPath(),
+                config.getOutputPath(),
+                new SimpleSSHConnection(config.getIP(), config.getPort(), config.getUsername(), config.getPassword())
+        );
+
+
 
     }
 
