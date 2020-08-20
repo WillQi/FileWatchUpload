@@ -60,13 +60,12 @@ public class DefaultConfig implements Config {
      */
     private void loadConfigurationFile () {
         this.data.clear();
-        Properties config = new Properties();
 
         // Load existing configuration.
         if (configFile.exists() && configFile.isFile()) {
             try {
                 InputStream configStream = new FileInputStream(configFile);
-                config.load(configStream);
+                this.data.load(configStream);
                 configStream.close();
             } catch (IOException exception) {
                 exception.printStackTrace();

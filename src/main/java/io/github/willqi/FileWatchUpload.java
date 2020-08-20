@@ -4,6 +4,8 @@ import io.github.willqi.config.DefaultConfig;
 import io.github.willqi.connection.SimpleSSHConnection;
 import org.apache.commons.cli.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 
 public class FileWatchUpload {
@@ -40,15 +42,22 @@ public class FileWatchUpload {
         if (commandLine.hasOption("w")) {
             config.setWatchPath(commandLine.getOptionValue("w"));
         }
-        if (cliOptions.hasOption("o")) {
+        if (commandLine.hasOption("o")) {
             config.setOutputPath(commandLine.getOptionValue("o"));
         }
 
-        new WatchManager(
-                config.getWatchPath(),
-                config.getOutputPath(),
-                new SimpleSSHConnection(config.getIP(), config.getPort(), config.getUsername(), config.getPassword())
-        );
+        WatchManager watchManager;
+        try {
+            watchManager = new WatchManager(
+                    config.getWatchPath(),
+                    config.getOutputPath(),
+                    new SimpleSSHConnection(config.getIP(), config.getPort(), config.getUsername(), config.getPassword())
+            );
+        } catch (FileNotFoundException exception) {
+            exception.printStackTrace();
+            return;
+        }
+        watchManager.watch();
 
 
 
