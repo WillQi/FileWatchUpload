@@ -8,7 +8,7 @@ public interface Config {
 
     String getIP ();
 
-    String getPort ();
+    int getPort ();
 
     String getUsername ();
 

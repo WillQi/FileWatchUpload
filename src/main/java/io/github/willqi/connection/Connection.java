@@ -1,3 +1,9 @@
 package io.github.willqi.connection;
 
-public interface Connection {}
+import java.io.File;
+
+public interface Connection {
+
+    void upload (File file, String targetLocation);
+
+}

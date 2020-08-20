@@ -17,6 +17,7 @@ public class WatchManager {
 
     public WatchManager (String watchPath, String outputPath, Connection connection) throws FileNotFoundException {
         this.outputPath = outputPath;
+        this.connection = connection;
 
         // Ensure the watch path exists.
         this.watchFile = new File(watchPath);
@@ -31,7 +32,6 @@ public class WatchManager {
         WatchKey key;
         try {
             WatchService service = FileSystems.getDefault().newWatchService();
-            System.out.println((this.watchFile.isDirectory() ? this.watchFile.toPath() : this.watchFile.getParentFile().toPath()));
             key = (this.watchFile.isDirectory() ? this.watchFile.toPath() : this.watchFile.getParentFile().toPath()).register(service, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,7 +47,7 @@ public class WatchManager {
                     File modifiedFile = new File(Paths.get(this.watchFile.getAbsolutePath(), e.context().toString()).toString());
                     if (modifiedFile.isFile() && (this.watchFile.isDirectory() || this.watchFile.getName().equals(modifiedFile.getName()))) {
                         // upload.
-                        System.out.println("Uploading...");
+                        this.connection.upload(modifiedFile, this.outputPath);
                     }
 
                 }

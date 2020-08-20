@@ -1,10 +1,9 @@
 package io.github.willqi;
 
-import io.github.willqi.config.DefaultConfig;
+import io.github.willqi.config.SimpleSSHConfig;
 import io.github.willqi.connection.SimpleSSHConnection;
 import org.apache.commons.cli.*;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 
@@ -37,7 +36,7 @@ public class FileWatchUpload {
             configPath = Paths.get(System.getProperty("user.dir"), "filewatchupload.config").toString();
         }
 
-        DefaultConfig config = new DefaultConfig(configPath);
+        SimpleSSHConfig config = new SimpleSSHConfig(configPath);
 
         if (commandLine.hasOption("w")) {
             config.setWatchPath(commandLine.getOptionValue("w"));
@@ -57,6 +56,8 @@ public class FileWatchUpload {
             exception.printStackTrace();
             return;
         }
+
+        System.out.println("Watching...");
         watchManager.watch();
 
 

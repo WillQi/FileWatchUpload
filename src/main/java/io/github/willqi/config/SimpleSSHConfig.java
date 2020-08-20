@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class DefaultConfig implements Config {
+public class SimpleSSHConfig implements Config {
 
     private static Map<String, String> DEFAULT_CONFIGURATION = new HashMap<>();
 
@@ -13,7 +13,7 @@ public class DefaultConfig implements Config {
 
     private File configFile;
 
-    public DefaultConfig(String configPath) {
+    public SimpleSSHConfig(String configPath) {
         this.data = new Properties();
         this.configFile = new File(configPath);
 
@@ -36,8 +36,8 @@ public class DefaultConfig implements Config {
     }
 
     @Override
-    public String getPort() {
-        return this.data.getProperty("port");
+    public int getPort() {
+        return Integer.parseInt(this.data.getProperty("port"));
     }
 
     @Override
@@ -72,9 +72,11 @@ public class DefaultConfig implements Config {
                 return;
             }
         } else {
-            // Write new configuration file and load default configuration.
-            this.data.putAll(DefaultConfig.DEFAULT_CONFIGURATION);
+            // Write new configuration file and load default configuration.;
+            this.data.putAll(SimpleSSHConfig.DEFAULT_CONFIGURATION);
             this.save();
+            System.out.println("Created configuration file in directory. Please fill in details before running again.");
+            System.exit(0);
         }
     }
 
@@ -90,12 +92,12 @@ public class DefaultConfig implements Config {
     }
 
     static {
-        DefaultConfig.DEFAULT_CONFIGURATION.put("watch", "<target file/directory>");
-        DefaultConfig.DEFAULT_CONFIGURATION.put("out_dir", "<output file/directory>");
-        DefaultConfig.DEFAULT_CONFIGURATION.put("ip", "<ip of remote server>");
-        DefaultConfig.DEFAULT_CONFIGURATION.put("port", "<port of remote server>");
-        DefaultConfig.DEFAULT_CONFIGURATION.put("username", "<username>");
-        DefaultConfig.DEFAULT_CONFIGURATION.put("password", "<password>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("watch", "<target file/directory>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("out_dir", "<output file/directory>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("ip", "<ip of remote server>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("port", "<port of remote server>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("username", "<username>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("password", "<password>");
 
     }
 }
