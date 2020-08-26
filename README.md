@@ -8,8 +8,13 @@ This program uploads a file/directory of your choosing to a remote server whenev
 
 ## Usage
 
-- Download the latest [release](https://github.com/WillQi/FileWatchUpload/releases) and copy the jar to any folder of your choosing.
+- Download the latest [release](https://github.com/WillQi/FileWatchUpload/releases) gand copy the jar to any folder of your choosing.
 - Run it once.
 - A configuration file will be created in the same directory. Edit it to your server and file information.
 - Run the jar again
 - Any changes that happen to your file/directory will be uploaded to your server automatically when made.
+
+## Future Plans
+- Implement SSH connections with keys
+- Implement connection that just moves files to another directory
+- Add test cases
