@@ -30,27 +30,30 @@ public abstract class SSHConnection implements Connection {
             client.useCompression();
             client.connect(this.ip, this.port);
         } catch (IOException exception) {
-            System.out.println("Failed to upload.");
-            exception.printStackTrace();
+            System.out.println("Failed to connect to SSH server.");
             return;
         }
         if (!this.authenticate(client)) {
-            System.out.println("Failed to upload. Invalid credentials.");
+            System.out.println("Failed to authenticate. Invalid credentials.");
             try {
                 client.disconnect();
-            } catch (IOException exception) {}
+            } catch (IOException exception) {
+                System.out.println("Failed to disconnect SSH client");
+            }
             return;
         }
 
         try {
             client.newSCPFileTransfer().upload(file.getAbsolutePath(), targetLocation);
         } catch (IOException exception) {
-            exception.printStackTrace();
+            System.out.println("Failed to upload file");
         }
 
         try {
             client.disconnect();
-        } catch (IOException exception) {}
+        } catch (IOException exception) {
+            System.out.println("Failed to disconnect SSH client");
+        }
     }
 
 }
