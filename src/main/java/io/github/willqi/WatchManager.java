@@ -58,7 +58,7 @@ public class WatchManager {
             try {
                 this.watchThread.join();
             } catch (InterruptedException exception) {
-                exception.printStackTrace();
+                System.out.println("WatchManager join was interrupted.");
             }
         }
     }
@@ -82,7 +82,8 @@ public class WatchManager {
                 WatchService service = FileSystems.getDefault().newWatchService();
                 key = (this.watchFile.isDirectory() ? this.watchFile.toPath() : this.watchFile.getParentFile().toPath()).register(service, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Failed to create watch service.");
+                this.stop();
                 return;
             }
 
@@ -108,7 +109,9 @@ public class WatchManager {
                 try {
                     Thread.sleep(1000); // Give other threads a chance to watch.
                 } catch (InterruptedException exception) {
-                    this.watching.compareAndSet(true, false);
+                    System.out.println("WatchManager sleep was interrupted");
+                    this.stop();
+                    return;
                 }
             }
 

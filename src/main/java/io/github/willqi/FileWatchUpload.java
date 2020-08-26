@@ -53,7 +53,7 @@ public class FileWatchUpload {
                     new SimpleSSHConnection(config.getIP(), config.getPort(), config.getUsername(), config.getPassword())
             );
         } catch (FileNotFoundException exception) {
-            exception.printStackTrace();
+            System.out.println("Watch file/directory could not be found");
             return;
         }
 
