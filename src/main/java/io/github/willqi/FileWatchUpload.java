@@ -11,14 +11,14 @@ public class FileWatchUpload {
 
     public static void main (String[] args) {
 
-        Options cliOptions = new Options();
+        final Options cliOptions = new Options();
 
         cliOptions.addOption("w", "watch", true, "Path to file/directory to watch");
         cliOptions.addOption("o", "outdir", true, "Output directory on remote server");
         cliOptions.addOption("c", "config", true, "Path to configuration file");
 
-        CommandLineParser parser = new DefaultParser();
-        CommandLine commandLine;
+        final CommandLineParser parser = new DefaultParser();
+        final CommandLine commandLine;
 
         try {
             commandLine = parser.parse(cliOptions, args);
@@ -28,7 +28,7 @@ public class FileWatchUpload {
             return;
         }
 
-        String configPath;
+        final String configPath;
 
         if (commandLine.hasOption("c")) {
             configPath = commandLine.getOptionValue("c");
@@ -36,7 +36,7 @@ public class FileWatchUpload {
             configPath = Paths.get(System.getProperty("user.dir"), "filewatchupload.config").toString();
         }
 
-        SimpleSSHConfig config = new SimpleSSHConfig(configPath);
+        final SimpleSSHConfig config = new SimpleSSHConfig(configPath);
 
         if (commandLine.hasOption("w")) {
             config.setWatchPath(commandLine.getOptionValue("w"));
@@ -45,7 +45,7 @@ public class FileWatchUpload {
             config.setOutputPath(commandLine.getOptionValue("o"));
         }
 
-        WatchManager watchManager;
+        final WatchManager watchManager;
         try {
             watchManager = new WatchManager(
                     config.getWatchPath(),

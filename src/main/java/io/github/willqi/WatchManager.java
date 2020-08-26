@@ -77,9 +77,9 @@ public class WatchManager {
 
         this.watchThread = new Thread(() -> {
 
-            WatchKey key;
+            final WatchKey key;
             try {
-                WatchService service = FileSystems.getDefault().newWatchService();
+                final WatchService service = FileSystems.getDefault().newWatchService();
                 key = (this.watchFile.isDirectory() ? this.watchFile.toPath() : this.watchFile.getParentFile().toPath()).register(service, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
             } catch (IOException e) {
                 System.out.println("Failed to create watch service.");
@@ -89,11 +89,11 @@ public class WatchManager {
 
             while (key.isValid() && this.isWatching()) {
 
-                for (WatchEvent<?> event : key.pollEvents()) {
+                for (final WatchEvent<?> event : key.pollEvents()) {
 
                     if (!event.equals(StandardWatchEventKinds.OVERFLOW)) {
-                        WatchEvent<Path> e = (WatchEvent<Path>)event;
-                        File modifiedFile = new File(Paths.get(this.watchFile.getAbsolutePath(), e.context().toString()).toString());
+                        final WatchEvent<Path> e = (WatchEvent<Path>)event;
+                        final File modifiedFile = new File(Paths.get(this.watchFile.getAbsolutePath(), e.context().toString()).toString());
                         if (modifiedFile.isFile() && (this.watchFile.isDirectory() || this.watchFile.getName().equals(modifiedFile.getName()))) {
                             // upload.
                             System.out.println("New " + modifiedFile.getName() + " detected! Uploading...");
