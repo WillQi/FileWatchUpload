@@ -59,8 +59,7 @@ public class FileWatchUpload {
 
         System.out.println("Watching...");
         watchManager.watch();
-
-
+        watchManager.join();
 
     }
 
