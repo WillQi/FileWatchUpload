@@ -1,4 +1,4 @@
-package io.github.willqi.config;
+package io.github.willqi.filewatchupload.config;
 
 import java.io.*;
 import java.util.HashMap;

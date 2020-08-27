@@ -1,6 +1,6 @@
-package io.github.willqi;
+package io.github.willqi.filewatchupload;
 
-import io.github.willqi.connection.Connection;
+import io.github.willqi.filewatchupload.connection.Connection;
 
 import java.io.File;
 import java.io.FileNotFoundException;

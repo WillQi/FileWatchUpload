@@ -1,7 +1,7 @@
-package io.github.willqi;
+package io.github.willqi.filewatchupload;
 
-import io.github.willqi.config.SimpleSSHConfig;
-import io.github.willqi.connection.SimpleSSHConnection;
+import io.github.willqi.filewatchupload.config.SimpleSSHConfig;
+import io.github.willqi.filewatchupload.connection.SimpleSSHConnection;
 import org.apache.commons.cli.*;
 
 import java.io.FileNotFoundException;

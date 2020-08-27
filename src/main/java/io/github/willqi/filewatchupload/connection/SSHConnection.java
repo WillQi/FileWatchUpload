@@ -1,4 +1,4 @@
-package io.github.willqi.connection;
+package io.github.willqi.filewatchupload.connection;
 
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;

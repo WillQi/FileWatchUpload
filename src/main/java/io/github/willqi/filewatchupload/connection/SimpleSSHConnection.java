@@ -1,8 +1,7 @@
-package io.github.willqi.connection;
+package io.github.willqi.filewatchupload.connection;
 
 import net.schmizz.sshj.SSHClient;
 
-import java.io.File;
 import java.io.IOException;
 
 public class SimpleSSHConnection extends SSHConnection {

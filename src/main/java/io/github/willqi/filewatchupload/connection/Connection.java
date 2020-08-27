@@ -1,4 +1,4 @@
-package io.github.willqi.connection;
+package io.github.willqi.filewatchupload.connection;
 
 import java.io.File;
 
