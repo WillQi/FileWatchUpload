@@ -23,13 +23,13 @@ public class WatchManager {
 
     private Listener listener;
 
-    public WatchManager (String watchPath, String outputPath, Connection connection, Listener listener) throws FileNotFoundException {
-        this.outputPath = outputPath;
+    public WatchManager (WatchPathConfig pathConfig, Connection connection, Listener listener) throws FileNotFoundException {
+        this.outputPath = pathConfig.getOutputPath();
         this.connection = connection;
         this.listener = listener;
 
         // Ensure the watch path exists.
-        this.watchFile = new File(watchPath);
+        this.watchFile = new File(pathConfig.getWatchPath());
         if (!this.watchFile.exists()) {
             throw new FileNotFoundException("The watch file/directory does not exist.");
         }
@@ -135,6 +135,29 @@ public class WatchManager {
 
         this.watchThread.start();
 
+
+    }
+
+    /**
+     * Helper class to create watch path configuration
+     */
+    public static class WatchPathConfig {
+
+        private final String watchPath;
+        private final String outputPath;
+
+        public String getWatchPath () {
+            return this.watchPath;
+        }
+
+        public String getOutputPath () {
+            return this.outputPath;
+        }
+
+        public WatchPathConfig (String watchPath, String outputPath) {
+            this.watchPath = watchPath;
+            this.outputPath = outputPath;
+        }
 
     }
 

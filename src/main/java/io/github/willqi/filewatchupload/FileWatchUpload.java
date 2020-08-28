@@ -47,8 +47,7 @@ public class FileWatchUpload {
         }
 
         final WatchManager watchManager = new WatchManager(
-                config.getWatchPath(),
-                config.getOutputPath(),
+                new WatchManager.WatchPathConfig(config.getWatchPath(), config.getOutputPath()),
                 new SimpleSSHConnection(config.getIP(), config.getPort(), config.getUsername(), config.getPassword()),
                 new VerboseListener()
         );
