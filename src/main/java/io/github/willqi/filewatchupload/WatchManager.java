@@ -93,7 +93,12 @@ public class WatchManager {
 
                     if (!event.equals(StandardWatchEventKinds.OVERFLOW)) {
                         final WatchEvent<Path> e = (WatchEvent<Path>)event;
-                        final File modifiedFile = new File(Paths.get(this.watchFile.getAbsolutePath(), e.context().toString()).toString());
+                        final File modifiedFile;
+                        if (this.watchFile.isDirectory()) {
+                            modifiedFile = new File(Paths.get(this.watchFile.getAbsolutePath(), e.context().toString()).toString());
+                        } else {
+                            modifiedFile = new File(this.watchFile.getAbsolutePath());
+                        }
                         if (modifiedFile.isFile() && (this.watchFile.isDirectory() || this.watchFile.getName().equals(modifiedFile.getName()))) {
                             // upload.
                             System.out.println("New " + modifiedFile.getName() + " detected! Uploading...");
