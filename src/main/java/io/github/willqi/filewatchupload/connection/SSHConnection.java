@@ -23,7 +23,7 @@ public abstract class SSHConnection implements Connection {
     protected abstract boolean authenticate (SSHClient client);
 
     @Override
-    public void upload(File file, String targetLocation) {
+    public boolean upload(File file, String targetLocation) {
         final SSHClient client = new SSHClient();
         try {
             client.addHostKeyVerifier(new PromiscuousVerifier());
@@ -31,7 +31,7 @@ public abstract class SSHConnection implements Connection {
             client.connect(this.ip, this.port);
         } catch (IOException exception) {
             System.out.println("Failed to connect to SSH server.");
-            return;
+            return false;
         }
         if (!this.authenticate(client)) {
             System.out.println("Failed to authenticate. Invalid credentials.");
@@ -40,7 +40,7 @@ public abstract class SSHConnection implements Connection {
             } catch (IOException exception) {
                 System.out.println("Failed to disconnect SSH client");
             }
-            return;
+            return false;
         }
 
         try {
@@ -54,6 +54,8 @@ public abstract class SSHConnection implements Connection {
         } catch (IOException exception) {
             System.out.println("Failed to disconnect SSH client");
         }
+
+        return true;
     }
 
 }

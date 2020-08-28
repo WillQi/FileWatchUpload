@@ -102,8 +102,11 @@ public class WatchManager {
                         if (modifiedFile.isFile() && (this.watchFile.isDirectory() || this.watchFile.getName().equals(modifiedFile.getName()))) {
                             // upload.
                             System.out.println("New " + modifiedFile.getName() + " detected! Uploading...");
-                            this.connection.upload(modifiedFile, this.outputPath);
-                            System.out.println("Uploaded!");
+                            if (this.connection.upload(modifiedFile, this.outputPath)) {
+                                System.out.println("Uploaded!");
+                            } else {
+                                System.out.println("Failed to upload!");
+                            }
                         }
 
                     }
