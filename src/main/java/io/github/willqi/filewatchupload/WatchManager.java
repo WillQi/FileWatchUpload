@@ -55,14 +55,12 @@ public class WatchManager {
 
     /**
      * Resolves when the watch thread has ended.
-     * @throws InterruptedException
      */
     public void join () {
         if (this.watchThread != null) {
             try {
                 this.watchThread.join();
             } catch (InterruptedException exception) {
-                this.listener.onWatchFailure("WatchManager join was interrupted.");
                 exception.printStackTrace();
             }
         }
