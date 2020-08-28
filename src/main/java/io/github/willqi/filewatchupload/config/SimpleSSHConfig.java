@@ -13,7 +13,7 @@ public class SimpleSSHConfig implements Config {
 
     private File configFile;
 
-    public SimpleSSHConfig(String configPath) {
+    public SimpleSSHConfig(String configPath) throws FileNotFoundException {
         this.data = new Properties();
         this.configFile = new File(configPath);
 
@@ -58,7 +58,7 @@ public class SimpleSSHConfig implements Config {
     /**
      * Load existing configuration or create new configuration if no configuration exists.
      */
-    private void loadConfigurationFile () {
+    private void loadConfigurationFile () throws FileNotFoundException {
         this.data.clear();
 
         // Load existing configuration.
@@ -75,8 +75,7 @@ public class SimpleSSHConfig implements Config {
             // Write new configuration file and load default configuration.;
             this.data.putAll(SimpleSSHConfig.DEFAULT_CONFIGURATION);
             this.save();
-            System.out.println("Created configuration file in directory. Please fill in details before running again.");
-            System.exit(0);
+            throw new FileNotFoundException("Created configuration file in directory. Please fill in details before running again.");
         }
     }
 

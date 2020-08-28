@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 
 public class FileWatchUpload {
 
-    public static void main (String[] args) {
+    public static void main (String[] args) throws FileNotFoundException {
 
         final Options cliOptions = new Options();
 
@@ -45,17 +45,11 @@ public class FileWatchUpload {
             config.setOutputPath(commandLine.getOptionValue("o"));
         }
 
-        final WatchManager watchManager;
-        try {
-            watchManager = new WatchManager(
-                    config.getWatchPath(),
-                    config.getOutputPath(),
-                    new SimpleSSHConnection(config.getIP(), config.getPort(), config.getUsername(), config.getPassword())
-            );
-        } catch (FileNotFoundException exception) {
-            System.out.println("Watch file/directory could not be found");
-            return;
-        }
+        final WatchManager watchManager = new WatchManager(
+                config.getWatchPath(),
+                config.getOutputPath(),
+                new SimpleSSHConnection(config.getIP(), config.getPort(), config.getUsername(), config.getPassword())
+        );
 
         System.out.println("Watching...");
         watchManager.watch();
