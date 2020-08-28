@@ -2,7 +2,7 @@ package io.github.willqi.filewatchupload.listener;
 
 import java.io.File;
 
-public class VerboseListener implements Listener {
+public class VerboseListener extends Listener {
 
     @Override
     public void onWatchFailure (String reason) {

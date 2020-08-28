@@ -1,7 +1,6 @@
 package io.gihub.willqi.filewatchupload.config;
 
 import io.github.willqi.filewatchupload.config.SimpleSSHConfig;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -81,7 +80,11 @@ public class SimpleSSHConfigTest {
 
     private void resetTestDirectory () throws IOException {
         File testDirectory = new File(Paths.get(System.getProperty("user.dir"), "test").toString());
-        FileUtils.deleteDirectory(testDirectory);
+        if (testDirectory.exists()) {
+            for (File file : testDirectory.listFiles()) {
+                file.delete();
+            }
+        }
         testDirectory.mkdir();
     }
 
