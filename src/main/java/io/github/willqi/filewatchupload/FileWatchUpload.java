@@ -2,6 +2,7 @@ package io.github.willqi.filewatchupload;
 
 import io.github.willqi.filewatchupload.config.SimpleSSHConfig;
 import io.github.willqi.filewatchupload.connection.SimpleSSHConnection;
+import io.github.willqi.filewatchupload.listener.VerboseListener;
 import org.apache.commons.cli.*;
 
 import java.io.FileNotFoundException;
@@ -48,7 +49,8 @@ public class FileWatchUpload {
         final WatchManager watchManager = new WatchManager(
                 config.getWatchPath(),
                 config.getOutputPath(),
-                new SimpleSSHConnection(config.getIP(), config.getPort(), config.getUsername(), config.getPassword())
+                new SimpleSSHConnection(config.getIP(), config.getPort(), config.getUsername(), config.getPassword()),
+                new VerboseListener()
         );
 
         System.out.println("Watching...");

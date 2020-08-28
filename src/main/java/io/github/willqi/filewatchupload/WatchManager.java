@@ -1,6 +1,7 @@
 package io.github.willqi.filewatchupload;
 
 import io.github.willqi.filewatchupload.connection.Connection;
+import io.github.willqi.filewatchupload.listener.Listener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,9 +21,12 @@ public class WatchManager {
 
     private Thread watchThread;
 
-    public WatchManager (String watchPath, String outputPath, Connection connection) throws FileNotFoundException {
+    private Listener listener;
+
+    public WatchManager (String watchPath, String outputPath, Connection connection, Listener listener) throws FileNotFoundException {
         this.outputPath = outputPath;
         this.connection = connection;
+        this.listener = listener;
 
         // Ensure the watch path exists.
         this.watchFile = new File(watchPath);
@@ -58,7 +62,8 @@ public class WatchManager {
             try {
                 this.watchThread.join();
             } catch (InterruptedException exception) {
-                System.out.println("WatchManager join was interrupted.");
+                this.listener.onWatchFailure("WatchManager join was interrupted.");
+                exception.printStackTrace();
             }
         }
     }
@@ -81,8 +86,9 @@ public class WatchManager {
             try {
                 final WatchService service = FileSystems.getDefault().newWatchService();
                 key = (this.watchFile.isDirectory() ? this.watchFile.toPath() : this.watchFile.getParentFile().toPath()).register(service, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
-            } catch (IOException e) {
-                System.out.println("Failed to create watch service.");
+            } catch (IOException exception) {
+                this.listener.onWatchFailure("Failed to create watch service.");
+                exception.printStackTrace();
                 this.stop();
                 return;
             }
@@ -101,11 +107,11 @@ public class WatchManager {
                         }
                         if (modifiedFile.isFile() && (this.watchFile.isDirectory() || this.watchFile.getName().equals(modifiedFile.getName()))) {
                             // upload.
-                            System.out.println("New " + modifiedFile.getName() + " detected! Uploading...");
+                            this.listener.onPreUpload(modifiedFile);
                             if (this.connection.upload(modifiedFile, this.outputPath)) {
-                                System.out.println("Uploaded!");
+                                this.listener.onUploadSuccess(modifiedFile);
                             } else {
-                                System.out.println("Failed to upload!");
+                                this.listener.onUploadFailure(modifiedFile);
                             }
                         }
 
@@ -117,7 +123,8 @@ public class WatchManager {
                 try {
                     Thread.sleep(1000); // Give other threads a chance to watch.
                 } catch (InterruptedException exception) {
-                    System.out.println("WatchManager sleep was interrupted");
+                    this.listener.onWatchFailure("WatchManager sleep was interrupted");
+                    exception.printStackTrace();
                     this.stop();
                     return;
                 }
