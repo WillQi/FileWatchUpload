@@ -22,7 +22,6 @@ public class SimpleSSHConnection extends SSHConnection {
         try {
             client.authPassword(this.username, this.password);
         } catch (IOException exception) {
-            System.out.println("Failed to authenticate to SSH server");
             return false;
         }
         return client.isAuthenticated();
