@@ -97,7 +97,7 @@ public class WatchManager {
                         if (this.watchFile.isDirectory()) {
                             modifiedFile = new File(Paths.get(this.watchFile.getAbsolutePath(), e.context().toString()).toString());
                         } else {
-                            modifiedFile = new File(this.watchFile.getAbsolutePath());
+                            modifiedFile = new File(Paths.get(this.watchFile.getParentFile().getAbsolutePath(), e.context().toString()).toString());
                         }
                         if (modifiedFile.isFile() && (this.watchFile.isDirectory() || this.watchFile.getName().equals(modifiedFile.getName()))) {
                             // upload.
