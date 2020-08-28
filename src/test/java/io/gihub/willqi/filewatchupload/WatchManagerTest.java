@@ -63,6 +63,7 @@ public class WatchManagerTest {
             fail("Was interrupted");
             return;
         }
+        watchManager.stop();
 
         verify(mockConnection, times(1)).upload(any(File.class), anyString());
 
@@ -131,6 +132,7 @@ public class WatchManagerTest {
             fail("Was interrupted");
             return;
         }
+        watchManager.stop();
 
         verify(mockConnection, times(1)).upload(any(File.class), anyString());
 
