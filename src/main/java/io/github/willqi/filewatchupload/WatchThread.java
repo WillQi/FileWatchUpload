@@ -18,9 +18,9 @@ public class WatchThread implements Runnable {
     public void run() {
         File watchFile = this.watchManager.getWatchFile();
         Listener listener = this.watchManager.getListener();
-        final WatchKey key;
+        WatchKey key;
         try {
-            final WatchService service = FileSystems.getDefault().newWatchService();
+            WatchService service = FileSystems.getDefault().newWatchService();
             key = (watchFile.isDirectory() ? watchFile.toPath() : watchFile.getParentFile().toPath()).register(service, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
         } catch (IOException exception) {
             listener.onWatchFailure("Failed to create watch service.");
@@ -30,11 +30,11 @@ public class WatchThread implements Runnable {
 
         while (key.isValid() && !Thread.interrupted()) {
 
-            for (final WatchEvent<?> event : key.pollEvents()) {
+            for ( WatchEvent<?> event : key.pollEvents()) {
 
                 if (!event.equals(StandardWatchEventKinds.OVERFLOW)) {
-                    final WatchEvent<Path> e = (WatchEvent<Path>)event;
-                    final File modifiedFile;
+                    WatchEvent<Path> e = (WatchEvent<Path>)event;
+                    File modifiedFile;
                     if (watchFile.isDirectory()) {
                         modifiedFile = new File(Paths.get(watchFile.getAbsolutePath(), e.context().toString()).toString());
                     } else {

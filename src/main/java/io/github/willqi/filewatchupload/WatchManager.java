@@ -14,7 +14,7 @@ public class WatchManager {
 
     private final Connection connection;
 
-    private Listener listener;
+    private final Listener listener;
 
     public WatchManager (WatchPathConfig pathConfig, Connection connection, Listener listener) throws FileNotFoundException {
         this.pathConfig = pathConfig;

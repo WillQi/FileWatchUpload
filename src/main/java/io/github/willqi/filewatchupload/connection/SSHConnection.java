@@ -24,7 +24,7 @@ public abstract class SSHConnection implements Connection {
 
     @Override
     public boolean upload(File file, String targetLocation) {
-        final SSHClient client = new SSHClient();
+        SSHClient client = new SSHClient();
         try {
             client.addHostKeyVerifier(new PromiscuousVerifier());
             client.useCompression();
