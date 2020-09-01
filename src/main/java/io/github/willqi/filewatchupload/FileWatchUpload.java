@@ -53,8 +53,14 @@ public class FileWatchUpload {
         );
 
         System.out.println("Watching...");
-        watchManager.watch();
-        watchManager.join();
+        Thread watchThread = watchManager.watch();
+
+        try {
+            watchThread.join();
+        } catch (InterruptedException exception) {
+            System.out.println("Watch thread interrupted. No longer watching.");
+            exception.printStackTrace();
+        }
 
     }
 

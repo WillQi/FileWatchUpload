@@ -40,7 +40,8 @@ public class WatchManagerTest {
             fail("Cannot test without real watch path");
             return;
         }
-        watchManager.watch();
+
+        Thread watchThread = watchManager.watch();
 
         try {
             Thread.sleep(500); // Should be enough time to watch.
@@ -63,7 +64,8 @@ public class WatchManagerTest {
             fail("Was interrupted");
             return;
         }
-        watchManager.stop();
+
+        watchThread.interrupt();
 
         verify(mockConnection, times(1)).upload(any(File.class), anyString());
 
@@ -89,7 +91,6 @@ public class WatchManagerTest {
 
         Connection mockConnection = mock(Connection.class);
 
-
         final WatchManager watchManager;
         try {
             watchManager = new WatchManager(
@@ -101,7 +102,7 @@ public class WatchManagerTest {
             fail("Cannot test without real watch path");
             return;
         }
-        watchManager.watch();
+        Thread watchThread = watchManager.watch();
         try {
             Thread.sleep(500); // Should be enough time to watch.
         } catch (InterruptedException exception) {
@@ -132,7 +133,7 @@ public class WatchManagerTest {
             fail("Was interrupted");
             return;
         }
-        watchManager.stop();
+        watchThread.interrupt();
 
         verify(mockConnection, times(1)).upload(any(File.class), anyString());
 
