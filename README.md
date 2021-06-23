@@ -18,7 +18,7 @@ This program uploads a file of your choosing to a remote server whenever a chang
 ## `filewatchupload.bat` Script
 ```bash
 @ECHO OFF
-java -jar ./filewatchupload-1.0-SNAPSHOT.jar %*
+java -jar %~dp0/filewatchupload-1.0-SNAPSHOT.jar %*
 ```
 
 ## Configuration Types
