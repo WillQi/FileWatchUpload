@@ -2,10 +2,19 @@ package io.github.willqi.filewatchupload.config.data;
 
 import io.github.willqi.filewatchupload.config.ConfigType;
 
-public interface Config {
+public abstract class Config {
 
-    ConfigType getId();
+    private String[] outputDirectories = new String[0];
 
-    String[] getOutputDirectories();
+
+    public abstract ConfigType getType();
+
+    public String[] getOutputDirectories() {
+        return this.outputDirectories;
+    }
+
+    public void setOutputDirectories(String[] outputDirectories) {
+        this.outputDirectories = outputDirectories;
+    }
 
 }

@@ -6,7 +6,7 @@ import io.github.willqi.filewatchupload.config.data.SimpleSSHConfig;
 public class ConnectionResolver {
 
     public static Connection resolve(Config config) {
-        switch (config.getId()) {
+        switch (config.getType()) {
             case SIMPLE_SSH:
                 return new SimpleSSHConnection((SimpleSSHConfig)config);
             default:
