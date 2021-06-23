@@ -1,5 +1,6 @@
 package io.github.willqi.filewatchupload.config;
 
+import io.github.willqi.filewatchupload.config.data.Config;
 import io.github.willqi.filewatchupload.config.parsers.ConfigParser;
 import io.github.willqi.filewatchupload.config.parsers.SimpleSSHConfigParser;
 
@@ -10,10 +11,10 @@ public enum ConfigType {
 
 
     private final String id;
-    private final ConfigParser parser;
+    private final ConfigParser<? extends Config> parser;
 
 
-    ConfigType(String id, ConfigParser parser) {
+    ConfigType(String id, ConfigParser<? extends Config> parser) {
         this.id = id;
         this.parser = parser;
     }
@@ -22,7 +23,7 @@ public enum ConfigType {
         return this.id;
     }
 
-    public ConfigParser getParser() {
+    public ConfigParser<? extends Config> getParser() {
         return this.parser;
     }
 
