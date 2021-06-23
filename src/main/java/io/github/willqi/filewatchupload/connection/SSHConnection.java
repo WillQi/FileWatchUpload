@@ -1,5 +1,6 @@
 package io.github.willqi.filewatchupload.connection;
 
+import io.github.willqi.filewatchupload.config.data.RemoteConnectionConfig;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 
@@ -8,13 +9,10 @@ import java.io.IOException;
 
 public abstract class SSHConnection implements Connection {
 
-    protected final String ip;
+    private final RemoteConnectionConfig config;
 
-    protected final int port;
-
-    public SSHConnection (String ip, int port) {
-        this.ip = ip;
-        this.port = port;
+    public SSHConnection (RemoteConnectionConfig config) {
+        this.config = config;
     }
 
     /**
@@ -23,12 +21,12 @@ public abstract class SSHConnection implements Connection {
     protected abstract boolean authenticate (SSHClient client);
 
     @Override
-    public boolean upload(File file, String targetLocation) {
+    public boolean upload(File file) {
         SSHClient client = new SSHClient();
         try {
             client.addHostKeyVerifier(new PromiscuousVerifier());
             client.useCompression();
-            client.connect(this.ip, this.port);
+            client.connect(this.config.getIp(), this.config.getPort());
         } catch (IOException exception) {
             exception.printStackTrace();
             return false;
@@ -43,7 +41,9 @@ public abstract class SSHConnection implements Connection {
         }
 
         try {
-            client.newSCPFileTransfer().upload(file.getAbsolutePath(), targetLocation);
+            for (String outputDirectory : this.config.getOutputDirectories()) {
+                client.newSCPFileTransfer().upload(file.getAbsolutePath(), outputDirectory);
+            }
         } catch (IOException exception) {
             exception.printStackTrace();
             return false;
