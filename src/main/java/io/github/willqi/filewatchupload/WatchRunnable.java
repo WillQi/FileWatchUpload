@@ -32,7 +32,7 @@ public class WatchRunnable implements Runnable {
             // The key becomes invalid if the directory is deleted.
             while (key.isValid()) {
 
-                for ( WatchEvent<?> event : key.pollEvents()) {
+                for (WatchEvent<?> event : key.pollEvents()) {
                     if (!event.equals(StandardWatchEventKinds.OVERFLOW)) {
                         // File created/changed
                         WatchEvent<Path> watchEvent = (WatchEvent<Path>)event;
