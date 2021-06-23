@@ -74,7 +74,9 @@ public class ConfigRegistry {
 
     private static Path getDataDirectory() {
         // TODO: Look into other OS
-        return Paths.get(System.getenv("APPDATA"), "FWU");
+        Path dataDirectory = Paths.get(System.getenv("APPDATA"), "FWU");
+        dataDirectory.toFile().mkdirs();
+        return dataDirectory;
     }
 
     private static Path getConfigPath(String configId) {
