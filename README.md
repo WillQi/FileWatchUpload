@@ -9,7 +9,7 @@ This program uploads a file of your choosing to a remote server whenever a chang
 ## Usage
 
 - Download the latest [release](https://github.com/WillQi/FileWatchUpload/releases) and add place it in a folder.
-- In the same folder, create a file called `filewatchupload.bat` and set the contents to the script found further below.
+- In the same folder, create a file called `filewatchupload` and set the contents to the script found further below.
 - Create a file somewhere with the configuration structure you need. (See further down)
 - Register it `filewatchupload --register pathToConfigFile.json`
 - Now you can watch files and upload it using the configuration. `filewatchupload --config id --file ./fileToWatch` (the `id` can be found in the configuration JSON)
