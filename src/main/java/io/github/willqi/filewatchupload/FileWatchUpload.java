@@ -1,67 +1,106 @@
 package io.github.willqi.filewatchupload;
 
-import io.github.willqi.filewatchupload.config.SimpleSSHConfig;
-import io.github.willqi.filewatchupload.connection.SimpleSSHConnection;
+import io.github.willqi.filewatchupload.config.ConfigRegistry;
+import io.github.willqi.filewatchupload.config.data.Config;
+import io.github.willqi.filewatchupload.connection.Connection;
+import io.github.willqi.filewatchupload.connection.ConnectionResolver;
 import io.github.willqi.filewatchupload.listener.VerboseListener;
 import org.apache.commons.cli.*;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Paths;
 
 public class FileWatchUpload {
 
-    public static void main (String[] args) throws FileNotFoundException {
+    private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
 
-        final Options cliOptions = new Options();
 
-        cliOptions.addOption("w", "watch", true, "Path to file/directory to watch");
-        cliOptions.addOption("o", "outdir", true, "Output directory on remote server");
-        cliOptions.addOption("c", "config", true, "Path to configuration file");
+    public static void main(String[] args) {
+        Options cliOptions = new Options();
+        cliOptions.addOption("f", "file", true, "Path to file to upload");
+        cliOptions.addOption("c", "config", true, "configuration file name");
+        cliOptions.addOption("r", "register", true, "Relative path to the configuration file you are registering");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine;
-
         try {
             commandLine = parser.parse(cliOptions, args);
         } catch (ParseException exception) {
-            new HelpFormatter()
-                    .printHelp("filewatchupload", cliOptions);
+            HELP_FORMATTER.printHelp("filewatchupload", cliOptions);
             return;
         }
 
-        String configPath;
-
-        if (commandLine.hasOption("c")) {
-            configPath = commandLine.getOptionValue("c");
+        if (commandLine.hasOption("r")) {
+            // Register configuration file
+            doRegister(commandLine.getOptionValue("r"));
+        } else if (commandLine.hasOption("f") && commandLine.hasOption("c")) {
+            // Watch a file
+            doWatch(commandLine.getOptionValue("c"), commandLine.getOptionValue("f"));
         } else {
-            configPath = Paths.get(System.getProperty("user.dir"), "filewatchupload.config").toString();
+            // Invalid
+            HELP_FORMATTER.printHelp("filewatchupload", cliOptions);
         }
 
-        SimpleSSHConfig config = new SimpleSSHConfig(configPath);
+    }
 
-        if (commandLine.hasOption("w")) {
-            config.setWatchPath(commandLine.getOptionValue("w"));
+    /**
+     * Register a configuration file
+     * @param relativePath
+     */
+    private static void doRegister(String relativePath) {
+        try {
+            ConfigRegistry.register(Paths.get(System.getProperty("user.dir"), relativePath));
+        } catch (FileNotFoundException exception) {
+            System.out.println("Could not find configuration file to register.");
+            return;
+        } catch (IOException exception) {
+            System.out.println("Failed to register configuration file.");
+            exception.printStackTrace();
+            return;
         }
-        if (commandLine.hasOption("o")) {
-            config.setOutputPath(commandLine.getOptionValue("o"));
+        System.out.println("Registered!");
+    }
+
+    /**
+     * Watch a file using a configuration id
+     * @param configId
+     * @param watchFileRelativePath
+     */
+    private static void doWatch(String configId, String watchFileRelativePath) {
+        Config config;
+        try {
+            config = ConfigRegistry.get(configId);
+        } catch (FileNotFoundException exception) {
+            System.out.println("Could not find configuration file.");
+            return;
+        } catch (IOException exception) {
+            System.out.println("Failed to parse configuration file.");
+            exception.printStackTrace();
+            return;
         }
+        Connection connection = ConnectionResolver.resolve(config);
 
-        WatchManager watchManager = new WatchManager(
-                new WatchManager.WatchPathConfig(config.getWatchPath(), config.getOutputPath()),
-                new SimpleSSHConnection(config.getIP(), config.getPort(), config.getUsername(), config.getPassword()),
-                new VerboseListener()
-        );
+        WatchManager watchManager = new WatchManager(connection, new VerboseListener());
 
-        System.out.println("Watching...");
-        Thread watchThread = watchManager.watch();
-
+        Thread watchThread;
+        try {
+            watchThread = watchManager.watch(Paths.get(System.getProperty("user.dir"), watchFileRelativePath));
+        } catch (FileNotFoundException exception) {
+            System.out.println("Could not file to watch");
+            return;
+        } catch (IOException exception) {
+            System.out.println("Failed to start watching file.");
+            exception.printStackTrace();
+            return;
+        }
+        System.out.println("Watching file!");
         try {
             watchThread.join();
         } catch (InterruptedException exception) {
-            System.out.println("Watch thread interrupted. No longer watching.");
+            System.out.println("Stopped watching file.");
             exception.printStackTrace();
         }
-
     }
 
 }

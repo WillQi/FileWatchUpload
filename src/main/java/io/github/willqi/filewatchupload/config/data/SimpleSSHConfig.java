@@ -1,4 +1,6 @@
-package io.github.willqi.filewatchupload.config;
+package io.github.willqi.filewatchupload.config.data;
+
+import io.github.willqi.filewatchupload.config.ConfigType;
 
 import java.io.*;
 import java.util.HashMap;
@@ -9,9 +11,19 @@ public class SimpleSSHConfig implements Config {
 
     private static Map<String, String> DEFAULT_CONFIGURATION = new HashMap<>();
 
-    private Properties data;
+    static {
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("watch", "<target file/directory>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("out_dir", "<output file/directory>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("ip", "<ip of remote server>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("port", "<port of remote server>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("username", "<username>");
+        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("password", "<password>");
+    }
 
-    private File configFile;
+
+    private final Properties data;
+    private final File configFile;
+
 
     public SimpleSSHConfig(String configPath) throws FileNotFoundException {
         this.data = new Properties();
@@ -20,40 +32,34 @@ public class SimpleSSHConfig implements Config {
         this.loadConfigurationFile();
     }
 
+
     @Override
-    public String getWatchPath() {
-        return this.data.getProperty("watch");
+    public ConfigType getId() {
+        return ConfigType.SIMPLE_SSH;
     }
 
     @Override
-    public String getOutputPath() {
-        return this.data.getProperty("out_dir");
+    public String[] getOutputDirectories() {
+        return new String[]{ this.data.getProperty("out_dir") };
     }
 
-    @Override
+    public void setOutputPath (String[] path) {
+        this.data.put("out_dir", path);
+    }
+
     public String getIP() {
         return this.data.getProperty("ip");
     }
 
-    @Override
     public int getPort() {
         return Integer.parseInt(this.data.getProperty("port"));
     }
 
-    @Override
     public String getUsername() {
         return this.data.getProperty("username");
     }
 
     public String getPassword () { return this.data.getProperty("password"); }
-
-    public void setWatchPath (String path) {
-        this.data.put("watch", path);
-    }
-
-    public void setOutputPath (String path) {
-        this.data.put("out_dir", path);
-    }
 
     /**
      * Load existing configuration or create new configuration if no configuration exists.
@@ -90,13 +96,4 @@ public class SimpleSSHConfig implements Config {
         }
     }
 
-    static {
-        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("watch", "<target file/directory>");
-        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("out_dir", "<output file/directory>");
-        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("ip", "<ip of remote server>");
-        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("port", "<port of remote server>");
-        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("username", "<username>");
-        SimpleSSHConfig.DEFAULT_CONFIGURATION.put("password", "<password>");
-
-    }
 }

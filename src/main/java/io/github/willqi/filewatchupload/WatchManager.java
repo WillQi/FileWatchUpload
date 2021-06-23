@@ -1,84 +1,50 @@
 package io.github.willqi.filewatchupload;
 
+import io.github.willqi.filewatchupload.config.data.Config;
 import io.github.willqi.filewatchupload.connection.Connection;
 import io.github.willqi.filewatchupload.listener.Listener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class WatchManager {
 
-    private final File watchFile;
-
-    private final WatchPathConfig pathConfig;
-
     private final Connection connection;
-
     private final Listener listener;
 
-    public WatchManager (WatchPathConfig pathConfig, Connection connection, Listener listener) throws FileNotFoundException {
-        this.pathConfig = pathConfig;
+    public WatchManager (Connection connection, Listener listener) {
         this.connection = connection;
         this.listener = listener;
-
-        // Ensure the watch path exists.
-        this.watchFile = new File(pathConfig.getWatchPath());
-        if (!this.watchFile.exists()) {
-            throw new FileNotFoundException("The watch file/directory does not exist.");
-        }
-
     }
 
     /**
      * Start watching for file changes in the target directory
      */
-    public Thread watch () {
+    public Thread watch (Path path) throws IOException {
 
-        Thread watchThread = new Thread(new WatchThread(this));
+        File watchFile = path.toFile();
+        if (!watchFile.exists()) {
+            throw new FileNotFoundException("Cannot find file to watch");
+        }
+        if (watchFile.isDirectory()) {
+            throw new FileNotFoundException("The watched file cannot be a directory.");
+        }
+
+        Thread watchThread = new Thread(new WatchRunnable(this, watchFile));
         watchThread.start();
 
         return watchThread;
 
     }
 
-    public File getWatchFile () {
-        return this.watchFile;
+    public Connection getConnection() {
+        return this.connection;
     }
 
     public Listener getListener () {
         return this.listener;
-    }
-
-    public Connection getConnection () {
-        return this.connection;
-    }
-
-    public WatchPathConfig getPathConfig () {
-        return this.pathConfig;
-    }
-
-
-    /**
-     * Helper class to create watch path configuration
-     */
-    public static class WatchPathConfig {
-
-        private final String watchPath;
-        private final String outputPath;
-
-        public String getWatchPath () {
-            return this.watchPath;
-        }
-
-        public String getOutputPath () {
-            return this.outputPath;
-        }
-
-        public WatchPathConfig (String watchPath, String outputPath) {
-            this.watchPath = watchPath;
-            this.outputPath = outputPath;
-        }
-
     }
 
 }
