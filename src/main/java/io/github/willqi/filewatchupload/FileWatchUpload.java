@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 public class FileWatchUpload {
 
     private static final HelpFormatter HELP_FORMATTER = new HelpFormatter();
+    private static final ConfigRegistry CONFIG_REGISTRY = new ConfigRegistry(Paths.get(System.getenv("APPDATA"), "FWU"));
 
 
     public static void main(String[] args) {
@@ -21,6 +22,7 @@ public class FileWatchUpload {
         cliOptions.addOption("f", "file", true, "Path to file to upload");
         cliOptions.addOption("c", "config", true, "configuration file name");
         cliOptions.addOption("r", "register", true, "Relative path to the configuration file you are registering");
+        cliOptions.addOption("l", "list", false, "List all configurations registered");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine;
@@ -31,7 +33,10 @@ public class FileWatchUpload {
             return;
         }
 
-        if (commandLine.hasOption("r")) {
+
+        if (commandLine.hasOption("l")) {
+            doList();
+        } else if (commandLine.hasOption("r")) {
             // Register configuration file
             doRegister(commandLine.getOptionValue("r"));
         } else if (commandLine.hasOption("f") && commandLine.hasOption("c")) {
@@ -45,12 +50,21 @@ public class FileWatchUpload {
     }
 
     /**
+     * Output all configurations registered
+     */
+    private static void doList() {
+        System.out.println("Registered configuration ids\n" +
+                            "==============================");
+        CONFIG_REGISTRY.getIds().forEach(System.out::println);
+    }
+
+    /**
      * Register a configuration file
      * @param relativePath
      */
     private static void doRegister(String relativePath) {
         try {
-            ConfigRegistry.register(Paths.get(System.getProperty("user.dir"), relativePath));
+            CONFIG_REGISTRY.register(Paths.get(System.getProperty("user.dir"), relativePath));
         } catch (FileNotFoundException exception) {
             System.out.println("Could not find configuration file to register.");
             return;
@@ -70,7 +84,7 @@ public class FileWatchUpload {
     private static void doWatch(String configId, String watchFileRelativePath) {
         Config config;
         try {
-            config = ConfigRegistry.get(configId);
+            config = CONFIG_REGISTRY.get(configId);
         } catch (FileNotFoundException exception) {
             System.out.println("Could not find configuration file.");
             return;

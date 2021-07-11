@@ -8,12 +8,21 @@ import io.github.willqi.filewatchupload.config.parsers.ConfigParser;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigRegistry {
 
     private static final Gson GSON = new Gson();
 
+    private final Path dataDirectory;
+
+
+    public ConfigRegistry(Path dataDirectory) {
+        // TODO: Look into other OS
+        this.dataDirectory = dataDirectory;
+        this.dataDirectory.toFile().mkdirs();
+    }
 
     /**
      * Retrieve a saved configuration from the local filesystem
@@ -21,8 +30,8 @@ public class ConfigRegistry {
      * @return saved configuration
      * @throws IOException
      */
-    public static Config get(String configId) throws IOException {
-        File configFile = getConfigPath(configId).toFile();
+    public Config get(String configId) throws IOException {
+        File configFile = this.getConfigPath(configId).toFile();
         if (!configFile.exists()) {
             throw new FileNotFoundException("Configuration file does not exist.");
         }
@@ -47,11 +56,24 @@ public class ConfigRegistry {
     }
 
     /**
+     * Retrieve all configuration ids in the registry
+     * @return a list of ids
+     */
+    public List<String> getIds() {
+        File[] files = this.getDataDirectory().toFile().listFiles();
+        List<String> ids = new ArrayList<>(files.length);
+        for (File file : files) {
+            ids.add(file.getName().substring(0, file.getName().lastIndexOf(".json")));
+        }
+        return ids;
+    }
+
+    /**
      * Register configuration to local filesystem
      * @param path
      * @throws IOException
      */
-    public static void register(Path path) throws IOException {
+    public void register(Path path) throws IOException {
         File registerConfigFile = path.toFile();
         if (!registerConfigFile.exists()) {
             throw new FileNotFoundException("Could not find configuration file to register.");
@@ -66,21 +88,18 @@ public class ConfigRegistry {
             throw new InvalidConfigurationException("Missing id property in configuration.");
         }
 
-        File configFile = getConfigPath(data.get("id").getAsString()).toFile();
+        File configFile = this.getConfigPath(data.get("id").getAsString()).toFile();
         try (FileWriter writer = new FileWriter(configFile)) {
             writer.write(data.toString());
         }
     }
 
-    private static Path getDataDirectory() {
-        // TODO: Look into other OS
-        Path dataDirectory = Paths.get(System.getenv("APPDATA"), "FWU");
-        dataDirectory.toFile().mkdirs();
-        return dataDirectory;
+    public Path getDataDirectory() {
+        return this.dataDirectory;
     }
 
-    private static Path getConfigPath(String configId) {
-        return getDataDirectory().resolve(configId + ".json");
+    private Path getConfigPath(String configId) {
+        return this.getDataDirectory().resolve(configId + ".json");
     }
 
 }
